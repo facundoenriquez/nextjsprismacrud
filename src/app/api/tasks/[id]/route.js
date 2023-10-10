@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/libs/prisma';
-import { data } from 'autoprefixer';
 
 export async function GET(request, { params }) {
     const task = await prisma.task.findUnique({

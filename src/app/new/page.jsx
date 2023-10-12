@@ -4,13 +4,12 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 export default function NewPage({ params }) {
-
     const router = useRouter()
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
 
     useEffect(() => {
-        if (params) {
+        if (params.id) {
             const fetchData = async () => {
                 try {
                     const res = await axios.get(`/api/tasks/${params.id}`)
@@ -30,7 +29,7 @@ export default function NewPage({ params }) {
         const postData = { title, description }
         if (params) {
             try {
-                const res = await axios.put(`/api/tasks/${params.id}`, postData)
+                await axios.put(`/api/tasks/${params.id}`, postData)
             } catch (error) {
                 console.log(error)
             }
@@ -41,6 +40,17 @@ export default function NewPage({ params }) {
                 console.log(error)
             }
         }
+        router.refresh()
+        router.push('/')
+    }
+
+    const onDelete = async () => {
+        try {
+            await axios.delete(`/api/tasks/${params.id}`)
+        } catch (error) {
+            console.log(error)
+        }
+        router.refresh()
         router.push('/')
     }
 
@@ -52,10 +62,10 @@ export default function NewPage({ params }) {
                 <label className="font-bold text-sm" htmlFor="description">Descripcion de la terea</label>
                 <textarea placeholder="Describe tu tarea" className="border border-gray-400 p-2 mb-4 w-full text-black" name="description" id="description" cols="30" rows="10" onChange={(e) => setDescription(e.target.value)} value={description}></textarea>
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">{
-                    params ? 'Actualizar' : 'Crear'
+                    params.id ? 'Actualizar' : 'Crear'
                 }</button>
-                {params &&
-                    <button type="button" className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4">Eliminar</button>
+                {params.id &&
+                    <button type="button" className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4" onClick={onDelete}>Eliminar</button>
                 }
             </form>
         </div>
